@@ -41,10 +41,11 @@ AVR의 이전 주소 `ATmega128a_rtc_calculator`가 `avr-rtc-calculator`로 이�
 | recycling-ui.webp | smart-recycling-edge-ai / docs/assets/images/kiosk_detect_pass.png |
 | monitoring.webp | smart-monitoring-system / images/hardware_setup.png |
 | monitoring-ui.webp | smart-monitoring-system / images/qt_normal.png |
+| monitoring-demo.mp4 | smart-monitoring-system / images/demo.mp4 (H.264 720p 변환) |
 | fpga.webp | fpga-stopwatch / docs/assets/timing_10ms.png |
 | avr.webp | avr-rtc-calculator / docs/assets/images/i2c_wave1.png |
 | pokedex.webp | PokeDex / screenshots/list_screen.png |
 
 이미지는 EXIF 방향 보정 후 최대 1500×1100 범위로 축소·WebP 변환했습니다. 내용 합성은 하지 않았습니다. HTML 구조 블록은 원본 아키텍처를 요약한 설명이며 직접 측정 자료가 아닙니다.
 
-선풍기 README의 첨부 영상은 HTTP 404여서 저장소의 MP4를 로컬 에셋으로 제공했습니다. 다른 두 대표 영상은 GitHub 첨부 링크입니다. 자동 재생은 하지 않습니다.
+선풍기 README의 첨부 영상은 HTTP 404여서 저장소의 MP4를 로컬 에셋으로 제공했습니다. 모니터링 영상 원본은 HEVC이며 검증 Chromium에서 재생 준비가 완료되지 않아 H.264/AAC 720p, faststart 사본으로 변환했습니다. 재활용 영상은 재생 확인된 GitHub 첨부 링크입니다. 자동 재생은 하지 않습니다.

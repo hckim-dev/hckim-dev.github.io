@@ -40,6 +40,13 @@ with sync_playwright() as pw:
                 page.screenshot(path=str(OUT/f'{slug}-{width}.png'),full_page=True)
             zoom=page.locator('.zoom-link').first
             zoom.click(); assert page.locator('dialog').is_visible()
+            picture=page.locator('dialog img')
+            picture.evaluate('(img)=>img.decode()')
+            original_width=picture.bounding_box()['width']
+            page.get_by_role('button',name='2배 확대').click()
+            assert picture.bounding_box()['width'] >= original_width * 1.95
+            page.get_by_role('button',name='화면에 맞추기').click()
+            assert abs(picture.bounding_box()['width']-original_width)<2
             page.keyboard.press('Escape'); assert not page.locator('dialog').is_visible()
             assert zoom.evaluate('(e)=>e===document.activeElement')
             if width<620:
