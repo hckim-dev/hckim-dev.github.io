@@ -11,7 +11,7 @@ IMAGE_SIZES = {
     "recycling-ui": (1500, 846),
     "monitoring": (825, 1100),
     "monitoring-ui": (717, 929),
-    "fpga": (1500, 684),
+    "fpga": (1383, 1100),
     "avr": (1320, 1100),
     "pokedex": (564, 1100),
 }
@@ -241,11 +241,11 @@ def home():
     extras = [
         (
             "fpga",
-            "FPGA Stopwatch",
-            "fpga-stopwatch",
-            "Verilog · FSM · 테스트벤치",
-            "10 ms 해상도 스톱워치. 테스트벤치 2개 PASS와 100 MHz 제약 기준 WNS +4.224 ns가 기록되어 있습니다. 최종 버튼 수정본의 보드 재시험은 남아 있습니다.",
-            "실제 XSim VCD를 재구성한 10 ms 시간 계수 차트",
+            "FPGA Microwave Oven",
+            "fpga-microwave-oven",
+            "Verilog · FSM · PWM · 테스트벤치",
+            "시간 제어·도어 서보·모터 PWM·조작 잠금을 통합한 전자레인지 제어 모형. 동시 입력과 상태 전환의 경계 조건을 검증했습니다. 테스트벤치 16개 PASS 기록이 있으며, 가열 장치 없이 도어 위치는 명령·시간으로 추정합니다.",
+            "Basys3에 버튼·로터리 인코더·서보·DC 모터를 연결한 전자레인지 제어 모형",
         ),
         (
             "avr",
@@ -269,7 +269,7 @@ def home():
     content += (
         '</div></section><section class="section" id="skills">'
         + heading("04", "Skills & Learning", "경험에 연결된 기술")
-        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / RTC·계산기 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Stopwatch 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
+        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / RTC·계산기 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
     )
     return shell("임베디드 · 시스템 SW 포트폴리오", content)
 
