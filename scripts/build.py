@@ -12,6 +12,7 @@ IMAGE_SIZES = {
     "monitoring": (825, 1100),
     "monitoring-ui": (717, 929),
     "fpga": (1383, 1100),
+    "tensorrps": (636, 476),
     "avr": (1320, 1100),
     "pokedex": (564, 1100),
 }
@@ -91,7 +92,7 @@ PROJECTS = [
             ("인식 → 화면", "Jetson → Binary TCP → Qt"),
             ("인증 → 정산", "Android ↔ REST / WebSocket ↔ FastAPI ↔ Qt"),
         ],
-        scope="김호철: 전체 소프트웨어 아키텍처와 통신 프로토콜·통합 검증, TensorRT 비동기 파이프라인과 검출 누락 유예 FSM, Qt 바이너리 스트리밍 및 SQLite 정산 트랜잭션 구현. 팀 전체 결과와 개인 담당 범위를 구분합니다.",
+        scope="김호철: 전체 소프트웨어 아키텍처와 통신 프로토콜·통합 검증, TensorRT 추론과 검출 누락 유예 FSM, Qt 바이너리 스트리밍 및 FastAPI·SQLite 기반 배출 이력·포인트 처리 구현. 팀 전체 결과와 개인 담당 범위를 구분합니다.",
         team="팀원 담당: AI 모델 벤치마크와 2-Stage 검사 모델(권민지), STM32 제어·초음파 센서 계측 및 서보 동작 튜닝(석민정), 키오스크 기구 설계·제작(현수근). 이 영역을 개인 단독 구현으로 소개하지 않습니다.",
         decisions=[
             (
@@ -185,8 +186,9 @@ PROJECTS = [
 ]
 
 
-def link(url, label, cls=""):
-    return f'<a class="{cls}" href="{escape(url, quote=True)}">{label}</a>'
+def link(url, label, cls="", aria_label=""):
+    aria = f' aria-label="{escape(aria_label, quote=True)}"' if aria_label else ""
+    return f'<a class="{cls}" href="{escape(url, quote=True)}"{aria}>{label}</a>'
 
 
 def photo(name, alt, prefix="", caption="", eager=False):
@@ -206,7 +208,7 @@ def shell(
 <html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title} · 김호철</title><meta name="description" content="{description}"><meta name="theme-color" content="#f6f8fb"><meta property="og:title" content="{title} · 김호철"><meta property="og:description" content="{description}"><meta property="og:type" content="website"><link rel="canonical" href="https://hckim-dev.github.io/{canonical}"><link rel="stylesheet" href="{prefix}assets/site.css"><script src="{prefix}assets/site.js" defer></script><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"></head>
 <body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="header"><nav class="nav wrap" aria-label="주 메뉴"><a class="brand" href="{prefix}index.html"><span>HC.</span>김호철</a><button class="mobile-menu" aria-expanded="false" aria-controls="nav-links">메뉴</button><div class="nav-links" id="nav-links"><a href="{prefix}index.html#experience">실무 경험</a><a href="{prefix}index.html#projects">프로젝트</a><a href="{prefix}index.html#contact">연락처</a><a class="resume" href="{prefix}assets/resume.pdf">이력서 PDF ↗</a></div></nav></header>
 {content}
-<footer class="footer"><div class="wrap"><span>김호철 · Embedded &amp; Systems Software</span><span>자료 확인 2026.10.23 · {link(GH.rstrip("/"), "GitHub ↗")}</span></div></footer>
+<footer class="footer"><div class="wrap"><span>김호철 · Embedded &amp; Systems Software</span><span>{link(GH + "hckim-dev.github.io/blob/master/docs/SOURCES.md", "콘텐츠 근거 ↗")} · {link(GH.rstrip("/"), "GitHub ↗")}</span></div></footer>
 <dialog aria-label="프로젝트 이미지 확대"><div class="dialog-actions"><button type="button" class="zoom-toggle" aria-pressed="false">2배 확대</button><a class="original-image" target="_blank" rel="noopener">이미지 파일 열기 ↗</a><button type="button" class="dialog-close">닫기 ×</button></div><div class="image-viewport"><img alt=""></div><p></p></dialog></body></html>'''
 
 
@@ -248,6 +250,14 @@ def home():
             "Basys3에 버튼·로터리 인코더·서보·DC 모터를 연결한 전자레인지 제어 모형",
         ),
         (
+            "tensorrps",
+            "TensorRPS · 가위바위보",
+            "jetson-orin-yolo11-rps",
+            "Python · TensorRT · CUDA · OpenCV",
+            "Jetson에서 YOLO11·TensorRT로 손 제스처를 인식하는 가위바위보. 추론 입출력 버퍼를 사전 할당·재사용하고 10프레임 판정을 게임 FSM에 연결했습니다. 게임 로직 테스트 9개 PASS. 실행에는 별도 모델 엔진이 필요합니다.",
+            "TensorRPS 시연 영상의 손 제스처 탐지 박스와 카운트다운·점수 화면",
+        ),
+        (
             "avr",
             "AVR RTC · 계산기",
             "avr-rtc-calculator",
@@ -265,11 +275,11 @@ def home():
         ),
     ]
     for im, title, repo, tech, body, alt in extras:
-        content += f'<article class="small-card"><img src="assets/{im}.webp" width="{IMAGE_SIZES[im][0]}" height="{IMAGE_SIZES[im][1]}" alt="{alt}" loading="lazy"><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link")}</article>'
+        content += f'<article class="small-card"><img src="assets/{im}.webp" width="{IMAGE_SIZES[im][0]}" height="{IMAGE_SIZES[im][1]}" alt="{alt}" loading="lazy"><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link", title + " 저장소 · 설계와 검증 ↗")}</article>'
     content += (
         '</div></section><section class="section" id="skills">'
         + heading("04", "Skills & Learning", "경험에 연결된 기술")
-        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / RTC·계산기 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
+        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / RTC·계산기 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / TensorRPS / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
     )
     return shell("임베디드 · 시스템 SW 포트폴리오", content)
 
