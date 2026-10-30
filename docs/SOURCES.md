@@ -1,6 +1,6 @@
 # 콘텐츠 근거와 에셋 출처
 
-사이트에 사용한 경력·프로젝트 설명과 에셋의 출처를 기록합니다. TensorRPS와 재활용의 정산 구현 범위는 2026-10-30, FPGA 전자레인지는 2026-10-29, 나머지 자료는 2026-10-23 기준으로 확인했습니다.
+사이트에 사용한 경력·프로젝트 설명과 에셋의 출처를 기록합니다. TensorRPS, STM32 두 작품, AVR 주행차·세탁기와 재활용의 정산 구현 범위는 2026-10-30, FPGA 전자레인지는 2026-10-29, 나머지 자료는 2026-10-23 기준으로 확인했습니다.
 
 ## 경력과 공개 범위
 
@@ -18,6 +18,10 @@
 | [Smart Monitoring](https://github.com/hckim-dev/smart-monitoring-system)     | `778ce5d3c94f7af0c24ce3ef6cfd9fa797565722` |
 | [FPGA Microwave Oven](https://github.com/hckim-dev/fpga-microwave-oven)      | `08e6835724b4ce0cb36112d1ddbe7e56efe928b2` |
 | [TensorRPS](https://github.com/hckim-dev/jetson-orin-yolo11-rps)             | `8098d88d93216753565e747ee581e8933f480ec5` |
+| [STM32 다중 출력 제어](https://github.com/hckim-dev/stm32-adc-pwm-spi-dma-ws2812b) | `76514eb7af979882508dcca4a7d0c18c0dfd995d` |
+| [STM32 DC 모터 제어](https://github.com/hckim-dev/stm32-motor-project)      | `6e683a0b0c25046ddff63d9b67630b4757fd5120` |
+| [AVR 장애물 회피 주행차](https://github.com/hckim-dev/avr-autonomous-car)   | `f5debb2025e933aad75c89c655c0aeb230361689` |
+| [AVR 세탁기 제어](https://github.com/hckim-dev/avr-washing-machine)         | `fe93983c083c5e3dc4e5ebcc869949f51d92db7f` |
 | [AVR RTC Calculator](https://github.com/hckim-dev/avr-rtc-calculator)        | `19954336d42c9912f279e186a570b241761f9de6` |
 | [PokeDex](https://github.com/hckim-dev/PokeDex)                              | `4161b80765e1c03608f89984b506a7cf9ec3a53b` |
 
@@ -30,6 +34,10 @@ AVR의 이전 주소 `ATmega128a_rtc_calculator`가 `avr-rtc-calculator`로 이�
 - 모니터링: README, docs/07_troubleshooting_log.md, `stm32-firmware/timer.c`와 `option.h`의 96 MHz PWM 설정 대조. 가스 입력 모사 및 Qt에서 자동 차단을 판단하는 구조를 명시했습니다.
 - FPGA 전자레인지: README, docs/design.md, docs/verification.md, docs/troubleshooting.md 및 `control_lock.v`, `motor_controller.v`의 잠금·PWM 제어 대조. 테스트벤치 16개 PASS는 저장소의 검증 기록이며 포트폴리오 작업에서 재실행한 결과가 아닙니다. 가열 장치가 없는 제어 모형이고 도어 위치는 센서 없이 명령·시간으로 추정합니다. 내부 STA 통과를 외부 I/O 타이밍이나 실제 기구 안전성 검증으로 확대하지 않습니다.
 - TensorRPS: README, docs/architecture.md, docs/setup.md, docs/validation.md 및 `core/trt_engine.py`, `core/detector.py`, `game/state_machine.py` 대조. 동일 커밋의 게임 로직 테스트 9개를 로컬에서 실행해 PASS를 확인했습니다. 공개 시연 영상은 전체 디코딩과 대표 장면을 확인했습니다. Jetson·GPU·카메라는 재실행하지 않았고 FPS·정확도·E2E 지연의 측정 성과를 주장하지 않습니다. CUDA 전송·추론 뒤 프레임마다 동기화하며, 여러 프레임을 겹쳐 처리하는 구조가 아닙니다. 모델 가중치·엔진은 제공되지 않아 전체 실행에 별도 준비가 필요합니다.
+- STM32 다중 출력: README, docs/implementation.md, `main.c`, `ws2812b.c`, `exception.c`의 입력 매핑과 전송 경로. WS2812B는 TIM3 인터럽트 방식이며 DMA 전송으로 소개하지 않습니다. 흐름도는 코드의 데이터 흐름을 요약한 것으로 실제 배선도·실물 동작 증명이 아닙니다.
+- STM32 모터: README, docs/design.md 및 `main.c`, `motor.c`, `key.c`의 명령·상태·출력 연결. 그림은 MCU 측 GPIO/PWM 출력과 논리 상태를 나타내며 외부 드라이버 회로나 물리적 회전·정지 완료를 의미하지 않습니다.
+- AVR 주행차: README, docs/architecture.md, docs/hardware.md 및 `main.c`, `ultrasonic.c`의 거리 계측·회피 판단·수동 명령 처리. 실제 제작 사진을 사용하며, 센서 간섭 제거 효과·회피 성공률·응답 지연의 측정 성과를 주장하지 않습니다.
+- AVR 세탁기: README, docs/architecture.md, docs/verification.md 및 `main.c`, `uart0.c`의 공정 상태·시간·수신 큐. 대표 이미지는 저장소에 보관된 기존 시연 영상의 추출 장면입니다. 최신 소스와 촬영 당시 바이너리의 동일성이나 모든 완료 경로의 정상 동작을 입증하는 자료로 사용하지 않습니다.
 - AVR: 최신 README의 I²C 계측 해석과 버전 대응 한계.
 - PokeDex: README의 구조·캐시·테스트 설명과 실제 앱 화면.
 
@@ -46,6 +54,10 @@ AVR의 이전 주소 `ATmega128a_rtc_calculator`가 `avr-rtc-calculator`로 이�
 | monitoring-demo.mp4 | smart-monitoring-system / images/demo.mp4 (H.264 720p 변환)        |
 | fpga.webp           | fpga-microwave-oven / docs/assets/hardware_overview.jpg            |
 | tensorrps.webp      | TensorRPS README의 [공개 시연 영상](https://github.com/user-attachments/assets/56a1ff8a-05af-4022-92a5-0b77f87816be) / 약 6초 장면 |
+| stm32-adc.svg       | 본 사이트 제작 / stm32-adc-pwm-spi-dma-ws2812b의 main.c·ws2812b.c·exception.c 기반 흐름도 |
+| stm32-motor.svg     | 본 사이트 제작 / stm32-motor-project의 main.c·motor.c·key.c 기반 MCU 출력 흐름도 |
+| avr-car.webp        | avr-autonomous-car / docs/images/front.png                       |
+| avr-washer.webp     | avr-washing-machine / docs/images/demo_preview.jpg               |
 | avr.webp            | avr-rtc-calculator / docs/assets/images/i2c_wave1.png              |
 | pokedex.webp        | PokeDex / screenshots/list_screen.png                              |
 

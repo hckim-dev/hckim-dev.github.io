@@ -13,6 +13,10 @@ IMAGE_SIZES = {
     "monitoring-ui": (717, 929),
     "fpga": (1383, 1100),
     "tensorrps": (636, 476),
+    "stm32-adc": (720, 480),
+    "stm32-motor": (720, 480),
+    "avr-car": (825, 1100),
+    "avr-washer": (619, 1100),
     "avr": (1320, 1100),
     "pokedex": (564, 1100),
 }
@@ -237,12 +241,12 @@ def home():
         content += f'''<article class="project"><div class="project-media"><img src="assets/{p["image"]}.webp" width="{IMAGE_SIZES[p["image"]][0]}" height="{IMAGE_SIZES[p["image"]][1]}" alt="{p["alt"]}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
     content += (
         '</section><section class="section" id="more-projects">'
-        + heading("03", "More projects", "기초를 넓힌 구현들")
+        + heading("03", "More projects", "장치 제어에서 추론·앱까지", "MCU 주변장치, 제어 상태, FPGA 논리, 영상 추론과 앱을 직접 구현한 개인 프로젝트입니다.")
         + '<div class="cards">'
     )
     extras = [
         (
-            "fpga",
+            "fpga.webp",
             "FPGA Microwave Oven",
             "fpga-microwave-oven",
             "Verilog · FSM · PWM · 테스트벤치",
@@ -250,7 +254,7 @@ def home():
             "Basys3에 버튼·로터리 인코더·서보·DC 모터를 연결한 전자레인지 제어 모형",
         ),
         (
-            "tensorrps",
+            "tensorrps.webp",
             "TensorRPS · 가위바위보",
             "jetson-orin-yolo11-rps",
             "Python · TensorRT · CUDA · OpenCV",
@@ -258,7 +262,39 @@ def home():
             "TensorRPS 시연 영상의 손 제스처 탐지 박스와 카운트다운·점수 화면",
         ),
         (
-            "avr",
+            "stm32-adc.svg",
+            "STM32 다중 출력 제어",
+            "stm32-adc-pwm-spi-dma-ws2812b",
+            "C · ADC · SPI · Timer / ISR",
+            "가변저항 입력을 RGB LED 색상·SPI 바그래프·모터 PWM으로 매핑했습니다. WS2812B의 GRB 데이터를 타이머 인터럽트로 전송하고, 메인 루프와 전송 버퍼의 역할을 나눴습니다.",
+            "코드 기반 흐름도: ADC 입력을 RGB LED·SPI 바그래프·모터 PWM으로 매핑하는 STM32 펌웨어",
+        ),
+        (
+            "stm32-motor.svg",
+            "STM32 DC 모터 제어",
+            "stm32-motor-project",
+            "C · CMSIS · PWM · UART · FSM",
+            "버튼·UART 명령으로 정·역방향과 PWM 듀티를 제어합니다. 숏클릭·롱클릭을 상태로 처리하고, 타이머를 시간 기준·입력 판정·PWM 생성으로 분리했습니다.",
+            "코드 기반 흐름도: 버튼·UART 입력을 모터 상태와 PA0·PA1의 GPIO·PWM 출력으로 연결",
+        ),
+        (
+            "avr-car.webp",
+            "AVR 장애물 회피 주행차",
+            "avr-autonomous-car",
+            "C · 초음파 · Interrupt · PWM · Bluetooth",
+            "초음파 센서 3개의 거리를 비교해 장애물을 회피하고 Bluetooth로 수동 조종합니다. 센서 순차 구동·Echo 인터럽트 계측·모터 PWM을 연결하고, 두 FND에 방향과 주행 통계를 표시했습니다.",
+            "전방과 좌우에 초음파 센서 3개를 장착한 AVR 장애물 회피 주행차 실물",
+        ),
+        (
+            "avr-washer.webp",
+            "AVR 세탁기 제어",
+            "avr-washing-machine",
+            "C · Timer · PWM · UART · FSM",
+            "세탁·헹굼·탈수 공정을 시간에 따라 전환하는 AVR 제어 모형입니다. 시스템 상태와 공정·설정 시간을 분리하고, UART 수신 큐와 메인 루프를 연결해 버튼·PC 명령을 처리했습니다.",
+            "AVR 세탁기 시연 영상의 제어 보드·버튼·FND·LED·모터 드라이버 실물",
+        ),
+        (
+            "avr.webp",
             "AVR RTC · 계산기",
             "avr-rtc-calculator",
             "C · I²C · 오실로스코프",
@@ -266,7 +302,7 @@ def home():
             "I2C START와 장치 주소를 분석한 실제 오실로스코프 계측",
         ),
         (
-            "pokedex",
+            "pokedex.webp",
             "PokeDex",
             "PokeDex",
             "Kotlin · MVI · Room",
@@ -275,11 +311,12 @@ def home():
         ),
     ]
     for im, title, repo, tech, body, alt in extras:
-        content += f'<article class="small-card"><img src="assets/{im}.webp" width="{IMAGE_SIZES[im][0]}" height="{IMAGE_SIZES[im][1]}" alt="{alt}" loading="lazy"><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link", title + " 저장소 · 설계와 검증 ↗")}</article>'
+        width, height = IMAGE_SIZES[Path(im).stem]
+        content += f'<article class="small-card"><a class="zoom-link" href="assets/{im}" aria-label="{title} 이미지 확대"><img src="assets/{im}" width="{width}" height="{height}" alt="{alt}" loading="lazy"></a><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link", title + " 저장소 · 설계와 검증 ↗")}</article>'
     content += (
         '</div></section><section class="section" id="skills">'
         + heading("04", "Skills & Learning", "경험에 연결된 기술")
-        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / RTC·계산기 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / TensorRPS / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
+        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / STM32·AVR 제어 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / TensorRPS / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
     )
     return shell("임베디드 · 시스템 SW 포트폴리오", content)
 

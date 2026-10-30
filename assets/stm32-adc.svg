@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-labelledby="title desc">
+  <title id="title">STM32 ADC 기반 다중 출력 제어 흐름</title>
+  <desc id="desc">가변저항의 ADC 입력을 메인 루프에서 RGB 색상, SPI 바그래프, 모터 PWM으로 매핑합니다. RGB 데이터 전송에는 TIM3 인터럽트를 사용합니다.</desc>
+  <rect width="720" height="480" fill="#f6f8fb"/>
+  <g font-family="system-ui, 'Malgun Gothic', sans-serif" text-anchor="middle" fill="#14283d">
+    <text x="360" y="45" font-size="25" font-weight="700">STM32 · 하나의 입력, 세 가지 출력</text>
+    <rect x="225" y="70" width="270" height="76" rx="6" fill="#eaf0f9" stroke="#1858cc"/>
+    <text x="360" y="102" font-size="25" font-weight="700">가변저항 → ADC1</text>
+    <text x="360" y="129" font-size="19">PA6 · 12-bit 입력</text>
+    <path d="M360 146v27" stroke="#1858cc" stroke-width="3"/>
+    <rect x="160" y="173" width="400" height="66" rx="6" fill="#fff" stroke="#bcc8d4"/>
+    <text x="360" y="200" font-size="23" font-weight="700">메인 루프 · 출력값 매핑</text>
+    <text x="360" y="225" font-size="18">변화 감지 후 출력·상태 로그 갱신</text>
+    <path d="M360 239v27H130v31m230-31v31m0-31h230v31" fill="none" stroke="#1858cc" stroke-width="3"/>
+    <g fill="#fff" stroke="#bcc8d4">
+      <rect x="25" y="297" width="210" height="112" rx="6"/>
+      <rect x="255" y="297" width="210" height="112" rx="6"/>
+      <rect x="485" y="297" width="210" height="112" rx="6"/>
+    </g>
+    <g font-size="24" font-weight="700">
+      <text x="130" y="333">RGB LED</text><text x="360" y="333">바그래프</text><text x="590" y="333">모터 PWM</text>
+    </g>
+    <g font-size="18">
+      <text x="130" y="366">WS2812B · GRB</text><text x="130" y="391">TIM3 인터럽트</text>
+      <text x="360" y="366">SPI1</text><text x="360" y="391">SC16IS752 GPIO</text>
+      <text x="590" y="366">TIM5_CH2</text><text x="590" y="391">듀티 명령</text>
+    </g>
+    <text x="360" y="451" font-size="18" fill="#516578">코드 기반 제어 흐름도 · 실물 사진 아님</text>
+  </g>
+</svg>

@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="480" viewBox="0 0 720 480" role="img" aria-labelledby="title desc">
+  <title id="title">STM32 모터 제어의 입력·상태·출력 흐름</title>
+  <desc id="desc">버튼과 UART 입력을 메인 루프에서 처리하고 정방향, 정지, 역방향 상태에 따라 PA0와 PA1에 GPIO Low 또는 TIM5 PWM을 적용합니다.</desc>
+  <rect width="720" height="480" fill="#f6f8fb"/>
+  <g font-family="system-ui, 'Malgun Gothic', sans-serif" text-anchor="middle" fill="#14283d">
+    <text x="360" y="45" font-size="25" font-weight="700">STM32 · 입력과 모터 상태를 분리</text>
+    <g fill="#eaf0f9" stroke="#1858cc">
+      <rect x="70" y="75" width="270" height="80" rx="6"/>
+      <rect x="380" y="75" width="270" height="80" rx="6"/>
+    </g>
+    <g font-size="25" font-weight="700"><text x="205" y="109">버튼</text><text x="515" y="109">UART</text></g>
+    <g font-size="19"><text x="205" y="137">숏클릭 · 롱클릭</text><text x="515" y="137">F / R / S · 듀티 설정</text></g>
+    <path d="M205 155v25h155m155-25v25H360v22" fill="none" stroke="#1858cc" stroke-width="3"/>
+    <rect x="120" y="202" width="480" height="76" rx="6" fill="#fff" stroke="#bcc8d4"/>
+    <text x="360" y="233" font-size="24" font-weight="700">메인 루프 · 상태와 출력 갱신</text>
+    <text x="360" y="261" font-size="19">방향 · 마지막 방향 · PWM 듀티</text>
+    <path d="M360 278v25H130v24m230-24v24m0-24h230v24" fill="none" stroke="#1858cc" stroke-width="3"/>
+    <g fill="#fff" stroke="#bcc8d4">
+      <rect x="25" y="327" width="210" height="82" rx="6"/>
+      <rect x="255" y="327" width="210" height="82" rx="6"/>
+      <rect x="485" y="327" width="210" height="82" rx="6"/>
+    </g>
+    <g font-size="24" font-weight="700"><text x="130" y="360">정방향</text><text x="360" y="360">정지</text><text x="590" y="360">역방향</text></g>
+    <g font-size="19"><text x="130" y="389">PA0 Low · PA1 PWM</text><text x="360" y="389">PA0 · PA1 Low</text><text x="590" y="389">PA0 PWM · PA1 Low</text></g>
+    <text x="360" y="451" font-size="18" fill="#516578">코드 기반 MCU 출력 흐름도 · 실물 사진 아님</text>
+  </g>
+</svg>
