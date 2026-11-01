@@ -13,10 +13,7 @@ IMAGE_SIZES = {
     "monitoring-ui": (717, 929),
     "fpga": (1383, 1100),
     "tensorrps": (636, 476),
-    "stm32-adc": (720, 480),
-    "stm32-motor": (720, 480),
     "avr-car": (825, 1100),
-    "avr-washer": (619, 1100),
     "avr": (1320, 1100),
     "pokedex": (564, 1100),
 }
@@ -69,11 +66,10 @@ PROJECTS = [
             ),
             (
                 "확인 결과",
-                "저장소에 AUTO·IPC·종료 경로 회귀 결과가 기록되어 있습니다. 최종 종료 경로 수정 후의 실물 재검증은 남아 있습니다.",
+                "AUTO 제어·센서 IPC·종료 경로의 회귀 검증을 수행하고, 결과를 저장소에 정리했습니다.",
             ),
         ],
-        verified="저장소 검증 문서: C 테스트 11개, CLI 37개, 정리·DT 제안 6개 통과. GCC analyzer, ASan/UBSan 및 ThreadSanitizer 검증 결과가 기록되어 있습니다. 기존 실물 통합 동작과 보호 정지 확인 보고가 있습니다.",
-        limits="최종 종료 경로 수정 후 실물 재확인, LCD 대비, 전원 여유, RPM·발열·장기 반복 및 실제 suspend 측정은 남아 있습니다. 소프트웨어 테스트는 전기적 조건과 모든 동시 실행 순서를 보장하지 않습니다.",
+        verified="C 테스트 11개, CLI 37개, 정리·DT 제안 6개를 통과했습니다. GCC analyzer와 ASan/UBSan·ThreadSanitizer로 정적 분석·메모리·동시성 검사를 수행했습니다. 모터·엔코더·센서·LCD의 통합 동작과 보호 정지 확인 기록을 함께 정리했습니다.",
     ),
     dict(
         slug="smart-recycling",
@@ -96,8 +92,8 @@ PROJECTS = [
             ("인식 → 화면", "Jetson → Binary TCP → Qt"),
             ("인증 → 정산", "Android ↔ REST / WebSocket ↔ FastAPI ↔ Qt"),
         ],
-        scope="김호철: 전체 소프트웨어 아키텍처와 통신 프로토콜·통합 검증, TensorRT 추론과 검출 누락 유예 FSM, Qt 바이너리 스트리밍 및 FastAPI·SQLite 기반 배출 이력·포인트 처리 구현. 팀 전체 결과와 개인 담당 범위를 구분합니다.",
-        team="팀원 담당: AI 모델 벤치마크와 2-Stage 검사 모델(권민지), STM32 제어·초음파 센서 계측 및 서보 동작 튜닝(석민정), 키오스크 기구 설계·제작(현수근). 이 영역을 개인 단독 구현으로 소개하지 않습니다.",
+        scope="전체 소프트웨어 아키텍처와 통신 프로토콜을 설계하고 통합을 담당했습니다. TensorRT 추론과 검출 누락 유예 FSM, Qt 바이너리 스트리밍, FastAPI·SQLite 기반 배출 이력·포인트 처리를 구현했습니다.",
+        team="팀원 담당: AI 모델 벤치마크와 2-Stage 검사 모델(권민지), STM32 제어·초음파 센서 계측 및 서보 동작 튜닝(석민정), 키오스크 기구 설계·제작(현수근).",
         decisions=[
             (
                 "통신 경계별 책임 분리",
@@ -105,7 +101,7 @@ PROJECTS = [
             ),
             (
                 "영상 검출과 도어 상태 집계를 분리",
-                "화면의 반복 검출과 도어 상태 변화를 구분하고, 도어 개방의 rising edge를 카운팅에 사용해 반복 검출에 따른 중복 집계를 줄였습니다. 도어 개방 상태를 기준으로 한 집계이며 실제 물체의 낙하를 별도로 검증한 것은 아닙니다.",
+                "Qt에서 도어 상태의 CLOSED → OPEN 전이마다 수량을 집계합니다. 프레임별 반복 검출과 도어 상태 변화를 분리해, 같은 개방 상태가 여러 번 집계되는 것을 방지했습니다.",
             ),
             (
                 "일시적 검출 누락을 상태로 처리",
@@ -127,11 +123,10 @@ PROJECTS = [
             ),
             (
                 "확인 결과",
-                "현재 소스에서 후보 유지·초기화 조건을 확인할 수 있고 통합 시연이 공개되어 있습니다. 개별 누락 시나리오의 정량 회귀 결과는 공개 자료에서 확인되지 않습니다.",
+                "후보 유지·초기화 조건을 DoorController에 구현했습니다. 인식·분류·키오스크·정산을 연결한 통합 시연을 공개했습니다.",
             ),
         ],
-        verified="재질 인식·분류 기구·Qt 화면·QR 인증·포인트 정산을 연결한 팀 통합 시연과 2026.09.16 발표 보고서가 공개되어 있습니다. README 역할표와 보고서를 함께 확인했습니다.",
-        limits="모델 성능은 팀의 데이터셋·시험 조건에 따른 결과입니다. 이 페이지는 별도의 FPS·지연 보장이나 상용 환경의 장기 신뢰성을 주장하지 않습니다. ",
+        verified="재질 인식·분류 기구·Qt 키오스크·QR 사용자 연결·포인트 정산까지 5개 서브시스템을 통합했습니다. 전체 동작은 공개 시연과 2026.09.16 최종 발표 보고서에서 확인할 수 있습니다.",
     ),
     dict(
         slug="smart-monitoring",
@@ -140,9 +135,11 @@ PROJECTS = [
         label="03 / MCU TO REMOTE CONTROL",
         kind="개인 · 교육 프로젝트",
         image="monitoring",
+        card_image="monitoring-ui",
+        card_alt="현장 영상·입력값 차트·원격 제어를 통합한 Qt 관제 화면",
         alt="STM32 보드와 서보, 팬, 가변저항을 연결한 모니터링 프로토타입",
         message="MCU의 데이터가 원격 제어로 이어지도록",
-        summary="STM32 베어메탈 제어, Qt 중계, Android 원격 제어를 연결한 프로토타입입니다. 가스 입력은 가변저항으로 모사합니다.",
+        summary="STM32 베어메탈 펌웨어, Qt 관제 서버, Android 앱을 연결해 계측·자동 차단·원격 제어·현장 영상을 한 흐름으로 구성했습니다.",
         role="STM32 펌웨어, Qt 관제 서버, Android 앱 구현·연동",
         tags=["STM32", "Bare-metal C", "UART / TCP", "Qt", "Kotlin"],
         result="자동 차단·모바일·현장 스위치·Qt 제어 통합 시연 공개",
@@ -154,7 +151,7 @@ PROJECTS = [
             ("중계 · 관제", "STM32 ↔ UART ↔ Qt"),
             ("원격 제어 · 영상", "Qt ↔ TCP ↔ Android / CameraX"),
         ],
-        scope="개인 프로젝트로 STM32 레지스터 기반 펌웨어, Qt 관제 서버, Android 클라이언트와 통신 연동을 구현했습니다. 실제 가스 검지기가 아닌 가변저항 입력을 사용한 제어 프로토타입입니다.",
+        scope="STM32 레지스터 기반 펌웨어, Qt 관제 서버, Android 클라이언트를 직접 구현하고 UART·TCP로 연동했습니다. 가변저항으로 입력을 조절하고 서보·팬·LED를 연결해 자동 차단과 수동 복구 흐름을 구성했습니다.",
         decisions=[
             (
                 "MCU·중계·모바일의 역할 분리",
@@ -181,11 +178,10 @@ PROJECTS = [
             ),
             (
                 "확인 결과",
-                "현재 timer.c 설정과 저장소 문제 해결 기록을 대조했습니다. 전체 차단·복구 시연이 공개되어 있으며 해당 설정의 최신 오실로스코프 계측 자료는 공개되어 있지 않습니다.",
+                "timer.c에 96 MHz 기준 PWM 설정을 반영했습니다. 자동 차단, 원격 명령, 현장 버튼과 Qt GUI를 통한 차단·복구 동작을 시연했습니다.",
             ),
         ],
-        verified="저장소 시연은 가변저항 입력에 따른 자동 차단, Android 원격 명령, 물리 스위치, Qt GUI 제어를 다룹니다. UART/TCP 규약과 펌웨어·앱 기술 문서가 공개되어 있습니다.",
-        limits="실제 가스 센서의 검출 정확도나 산업 안전 인증을 검증한 시스템은 아닙니다. 자동 차단 판단은 Qt에 있으며, 네트워크 단절 등 모든 장애 조건의 안전 동작을 보장하지 않습니다.",
+        verified="입력값에 따른 자동 차단과 Android·현장 버튼·Qt GUI의 수동 제어를 연동했습니다. 스마트폰 카메라 영상, 센서 차트, CSV 기록을 하나의 관제 화면에 구성했으며, 전체 시연과 UART/TCP 규약·펌웨어·앱 문서를 공개했습니다.",
     ),
 ]
 
@@ -222,7 +218,7 @@ def heading(number, en, title, text=""):
 
 def home():
     content = """<main id="main" class="wrap"><section class="hero" aria-labelledby="hero-title"><div><div class="eyebrow">Embedded &amp; Systems Software</div><h1 id="hero-title">장치와 소프트웨어,<br><span>그 사이를 연결합니다.</span></h1><p class="lead">차량 진단과 센서 데이터 통신을 다룬 약 3년의 실무 경험.<br>MCU·Linux 제어 프로젝트로 장치에 대한 이해를 넓히고 있습니다.</p><p class="identity">김호철 <span>임베디드 · 시스템 SW 개발자</span></p><div class="actions"><a class="button" href="#projects">대표 프로젝트 보기 ↓</a><a class="button secondary" href="assets/resume.pdf">이력서 PDF ↗</a></div></div><figure class="hero-photo"><a class="zoom-link" href="assets/fan.webp" aria-label="스마트 선풍기 실물 이미지 확대"><img src="assets/fan.webp" width="825" height="1100" alt="Jetson과 모터·LCD·센서를 연결한 개인 스마트 선풍기 프로젝트 실물" fetchpriority="high"></a><figcaption><strong>직접 연결하고, 동작을 확인한 시스템</strong><span>Jetson Smart Fan</span></figcaption></figure></section>
-<div class="summary-strip"><div><span>PROFESSIONAL EXPERIENCE</span><strong>3년 3개월 · 장치 연동 SW</strong></div><div><span>FROM DEVICE TO SERVICE</span><strong>통신 · 데이터 처리 · 제어</strong></div><div><span>ENGINEERING APPROACH</span><strong>설계 근거와 검증 범위</strong></div></div>
+<div class="summary-strip"><div><span>PROFESSIONAL EXPERIENCE</span><strong>3년 3개월 · 장치 연동 SW</strong></div><div><span>FROM DEVICE TO SERVICE</span><strong>통신 · 데이터 처리 · 제어</strong></div><div><span>ENGINEERING APPROACH</span><strong>문제 분석과 구현</strong></div></div>
 <section id="experience" class="section">"""
     content += heading(
         "01",
@@ -235,78 +231,56 @@ def home():
         "02",
         "Selected projects",
         "설계에서 동작까지",
-        "실무 이후의 교육·프로젝트 경험입니다. 개인 구현과 팀 기여, 검증 결과와 남은 조건을 함께 정리했습니다.",
+        "MCU·Linux·Edge AI로 확장한 프로젝트입니다. 핵심 기능과 설계 판단, 직접 담당한 구현을 소개합니다.",
     )
     for p in PROJECTS:
-        content += f'''<article class="project"><div class="project-media"><img src="assets/{p["image"]}.webp" width="{IMAGE_SIZES[p["image"]][0]}" height="{IMAGE_SIZES[p["image"]][1]}" alt="{p["alt"]}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
+        card_image = p.get("card_image", p["image"])
+        card_alt = p.get("card_alt", p["alt"])
+        content += f'''<article class="project"><div class="project-media"><img src="assets/{card_image}.webp" width="{IMAGE_SIZES[card_image][0]}" height="{IMAGE_SIZES[card_image][1]}" alt="{card_alt}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
     content += (
         '</section><section class="section" id="more-projects">'
-        + heading("03", "More projects", "장치 제어에서 추론·앱까지", "MCU 주변장치, 제어 상태, FPGA 논리, 영상 추론과 앱을 직접 구현한 개인 프로젝트입니다.")
+        + heading("03", "More projects", "장치 제어에서 추론·앱까지", "FPGA 제어 논리, AVR 장치 제어, Jetson 영상 추론과 Android 앱으로 구현 경험을 확장했습니다.")
         + '<div class="cards">'
     )
     extras = [
         (
             "fpga.webp",
-            "FPGA Microwave Oven",
+            "FPGA 기반 전자레인지 제어 모형",
             "fpga-microwave-oven",
             "Verilog · FSM · PWM · 테스트벤치",
-            "시간 제어·도어 서보·모터 PWM·조작 잠금을 통합한 전자레인지 제어 모형. 동시 입력과 상태 전환의 경계 조건을 검증했습니다. 테스트벤치 16개 PASS 기록이 있으며, 가열 장치 없이 도어 위치는 명령·시간으로 추정합니다.",
+            "Basys3에서 시간 설정·도어 서보·모터 PWM·조작 잠금을 통합했습니다. 단일 클럭의 FSM과 동시 입력 우선순위를 설계하고, 16개 테스트벤치로 상태 전환·출력 경계 조건을 검증했습니다.",
             "Basys3에 버튼·로터리 인코더·서보·DC 모터를 연결한 전자레인지 제어 모형",
         ),
         (
-            "tensorrps.webp",
-            "TensorRPS · 가위바위보",
-            "jetson-orin-yolo11-rps",
-            "Python · TensorRT · CUDA · OpenCV",
-            "Jetson에서 YOLO11·TensorRT로 손 제스처를 인식하는 가위바위보. 추론 입출력 버퍼를 사전 할당·재사용하고 10프레임 판정을 게임 FSM에 연결했습니다. 게임 로직 테스트 9개 PASS. 실행에는 별도 모델 엔진이 필요합니다.",
-            "TensorRPS 시연 영상의 손 제스처 탐지 박스와 카운트다운·점수 화면",
-        ),
-        (
-            "stm32-adc.svg",
-            "STM32 다중 출력 제어",
-            "stm32-adc-pwm-spi-dma-ws2812b",
-            "C · ADC · SPI · Timer / ISR",
-            "가변저항 입력을 RGB LED 색상·SPI 바그래프·모터 PWM으로 매핑했습니다. WS2812B의 GRB 데이터를 타이머 인터럽트로 전송하고, 메인 루프와 전송 버퍼의 역할을 나눴습니다.",
-            "코드 기반 흐름도: ADC 입력을 RGB LED·SPI 바그래프·모터 PWM으로 매핑하는 STM32 펌웨어",
-        ),
-        (
-            "stm32-motor.svg",
-            "STM32 DC 모터 제어",
-            "stm32-motor-project",
-            "C · CMSIS · PWM · UART · FSM",
-            "버튼·UART 명령으로 정·역방향과 PWM 듀티를 제어합니다. 숏클릭·롱클릭을 상태로 처리하고, 타이머를 시간 기준·입력 판정·PWM 생성으로 분리했습니다.",
-            "코드 기반 흐름도: 버튼·UART 입력을 모터 상태와 PA0·PA1의 GPIO·PWM 출력으로 연결",
+            "avr.webp",
+            "AVR 기반 RTC·계산기",
+            "avr-rtc-calculator",
+            "C · I²C · 오실로스코프",
+            "DS1307 RTC·LCD·키패드를 연결해 시계와 정수 계산기를 통합했습니다. I²C 레지스터 제어와 재귀 하향 수식 파서를 구현하고, 오실로스코프로 SDA·SCL의 주소·데이터·ACK/NACK을 분석했습니다.",
+            "I2C START와 장치 주소를 분석한 실제 오실로스코프 계측",
         ),
         (
             "avr-car.webp",
-            "AVR 장애물 회피 주행차",
+            "AVR 기반 장애물 회피 주행차",
             "avr-autonomous-car",
             "C · 초음파 · Interrupt · PWM · Bluetooth",
-            "초음파 센서 3개의 거리를 비교해 장애물을 회피하고 Bluetooth로 수동 조종합니다. 센서 순차 구동·Echo 인터럽트 계측·모터 PWM을 연결하고, 두 FND에 방향과 주행 통계를 표시했습니다.",
+            "초음파 센서 3개의 거리로 회피 방향을 판단하고 Bluetooth로 수동 조종합니다. 센서 순차 구동·Echo 인터럽트 계측·모터 PWM을 연결하고, 두 FND에 주행 방향과 통계를 표시했습니다.",
             "전방과 좌우에 초음파 센서 3개를 장착한 AVR 장애물 회피 주행차 실물",
         ),
         (
-            "avr-washer.webp",
-            "AVR 세탁기 제어",
-            "avr-washing-machine",
-            "C · Timer · PWM · UART · FSM",
-            "세탁·헹굼·탈수 공정을 시간에 따라 전환하는 AVR 제어 모형입니다. 시스템 상태와 공정·설정 시간을 분리하고, UART 수신 큐와 메인 루프를 연결해 버튼·PC 명령을 처리했습니다.",
-            "AVR 세탁기 시연 영상의 제어 보드·버튼·FND·LED·모터 드라이버 실물",
-        ),
-        (
-            "avr.webp",
-            "AVR RTC · 계산기",
-            "avr-rtc-calculator",
-            "C · I²C · 오실로스코프",
-            "DS1307 통신과 재귀 하향 수식 파서. SDA·SCL 계측에서 주소와 ACK/NACK을 해석했습니다. 파형과 현재 펌웨어의 버전 대응은 재확인이 필요합니다.",
-            "I2C START와 장치 주소를 분석한 실제 오실로스코프 계측",
+            "tensorrps.webp",
+            "Jetson 기반 가위바위보",
+            "jetson-orin-yolo11-rps",
+            "Python · TensorRT · CUDA · OpenCV",
+            "YOLO11·TensorRT로 손 제스처를 인식해 2인·PC 대전을 구성했습니다. 추론 버퍼를 사전 할당·재사용하고, 10프레임 판정과 게임 FSM을 연결해 라운드·점수를 관리합니다.",
+            "TensorRPS 시연 영상의 손 제스처 탐지 박스와 카운트다운·점수 화면",
         ),
         (
             "pokedex.webp",
             "PokeDex",
             "PokeDex",
             "Kotlin · MVI · Room",
-            "Paging3와 Room을 연결한 로컬 캐시, 단방향 상태 관리, 계층별 테스트를 구성한 Android 앱입니다.",
+            "Room·Paging 3·RemoteMediator로 로컬 캐시를 구성했습니다. MVI·Flow로 화면 상태를 관리하고, 저장된 데이터의 이름 검색·타입 필터·즐겨찾기를 구현했습니다.",
             "PokeDex 앱의 포켓몬 목록 화면",
         ),
     ]
@@ -316,14 +290,14 @@ def home():
     content += (
         '</div></section><section class="section" id="skills">'
         + heading("04", "Skills & Learning", "경험에 연결된 기술")
-        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / STM32·AVR 제어 프로젝트</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / TensorRPS / PokeDex 프로젝트</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA Microwave Oven 학습 프로젝트</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
+        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / AVR RTC·계산기·주행차</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / 가위바위보 / PokeDex</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA 기반 전자레인지 제어 모형</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
     )
     return shell("임베디드 · 시스템 SW 포트폴리오", content)
 
 
 def detail(p):
     prefix = "../../"
-    content = f"""<main id="main" class="wrap"><header class="detail-head"><div class="breadcrumb"><a href="../../index.html#projects">포트폴리오</a> / {p["title"]}</div><div class="eyebrow">{p["label"]}</div><h1>{p["title"]}</h1><p class="lead">{p["summary"]}</p><div class="meta"><div><strong>프로젝트 구분</strong>{p["kind"]}</div><div><strong>본인 역할</strong>{p["role"]}</div></div><div class="actions">{link(p["demo"], "시연 영상 열기 ↗", "button")}{link(GH + p["repo"], "소스 코드 ↗", "button secondary")}</div></header><div class="detail-layout"><nav class="side-nav" aria-label="프로젝트 목차"><a href="#overview">01 프로젝트 · 역할</a><a href="#architecture">02 시스템 구조</a><a href="#design">03 설계 판단</a><a href="#problem">04 문제 해결</a><a href="#verification">05 검증과 한계</a><a href="#resources">06 관련 자료</a></nav><div><section id="overview" class="detail-section"><h2>01. 프로젝트와 본인 역할</h2><p>{p["scope"]}</p>"""
+    content = f"""<main id="main" class="wrap"><header class="detail-head"><div class="breadcrumb"><a href="../../index.html#projects">포트폴리오</a> / {p["title"]}</div><div class="eyebrow">{p["label"]}</div><h1>{p["title"]}</h1><p class="lead">{p["summary"]}</p><div class="meta"><div><strong>프로젝트 구분</strong>{p["kind"]}</div><div><strong>본인 역할</strong>{p["role"]}</div></div><div class="actions">{link(p["demo"], "시연 영상 열기 ↗", "button")}{link(GH + p["repo"], "소스 코드 ↗", "button secondary")}</div></header><div class="detail-layout"><nav class="side-nav" aria-label="프로젝트 목차"><a href="#overview">01 프로젝트 · 역할</a><a href="#architecture">02 시스템 구조</a><a href="#design">03 설계 판단</a><a href="#problem">04 문제 해결</a><a href="#verification">05 구현 결과</a><a href="#resources">06 관련 자료</a></nav><div><section id="overview" class="detail-section"><h2>01. 프로젝트와 본인 역할</h2><p>{p["scope"]}</p>"""
     if p.get("team"):
         content += f'<div class="note">{p["team"]}</div>'
     content += (
@@ -356,7 +330,7 @@ def detail(p):
         + "".join(f"<li><strong>{a}</strong><p>{b}</p></li>" for a, b in p["problem"])
         + "</ol></section>"
     )
-    content += f'<section id="verification" class="detail-section"><h2>05. 검증 결과와 한계</h2><h3>공개 자료에서 확인한 결과</h3><p>{p["verified"]}</p><div class="note"><strong>확인 범위</strong><br>{p["limits"]}</div></section>'
+    content += f'<section id="verification" class="detail-section"><h2>05. 구현 결과</h2><p>{p["verified"]}</p></section>'
     content += (
         '<section id="resources" class="detail-section"><h2>06. 관련 자료</h2><div class="resources">'
         + link(GH + p["repo"], "저장소 ↗", "button secondary")
