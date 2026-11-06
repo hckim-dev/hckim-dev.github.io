@@ -5,18 +5,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 GH = "https://github.com/hckim-dev/"
-IMAGE_SIZES = {
-    "fan": (825, 1100),
-    "recycling": (825, 1100),
-    "recycling-ui": (1500, 846),
-    "monitoring": (825, 1100),
-    "monitoring-ui": (717, 929),
-    "fpga": (1383, 1100),
-    "tensorrps": (636, 476),
-    "avr-car": (825, 1100),
-    "avr": (1320, 1100),
-    "pokedex": (564, 1100),
+# Image key: (path relative to assets/, width, height).
+IMAGES = {
+    "spi-monitoring-ui": ("projects/fpga-spi-sensor-monitoring/ui.webp", 1500, 711),
+    "spi-monitoring": ("projects/fpga-spi-sensor-monitoring/hardware.webp", 1500, 750),
+    "fan": ("projects/smart-fan/hardware.webp", 825, 1100),
+    "recycling": ("projects/smart-recycling/hardware.webp", 825, 1100),
+    "recycling-ui": ("projects/smart-recycling/ui.webp", 1500, 846),
+    "monitoring": ("projects/smart-monitoring/hardware.webp", 825, 1100),
+    "monitoring-ui": ("projects/smart-monitoring/ui.webp", 717, 929),
+    "fpga": ("projects/fpga-microwave-oven/hardware.webp", 1383, 1100),
+    "tensorrps": ("projects/jetson-orin-yolo11-rps/demo-frame.webp", 636, 476),
+    "avr-car": ("projects/avr-autonomous-car/hardware.webp", 825, 1100),
+    "avr": ("projects/avr-rtc-calculator/i2c-waveform.webp", 1320, 1100),
+    "pokedex": ("projects/pokedex/list-screen.webp", 564, 1100),
 }
+
 PROJECTS = [
     dict(
         slug="smart-fan",
@@ -31,7 +35,7 @@ PROJECTS = [
         role="Kernel Driver, 제어 앱, 센서 IPC 및 검증 구현",
         tags=["C11", "Linux", "ioctl", "Process / Thread"],
         result="정상 동작과 오류·종료 경로의 소프트웨어 회귀 검증 기록",
-        demo="../../assets/fan-demo.mp4",
+        demo="../../assets/projects/smart-fan/demo.mp4",
         doc="docs/architecture.md",
         review="docs/review.md",
         flow=[
@@ -51,7 +55,7 @@ PROJECTS = [
             ),
             (
                 "복구와 재기동을 구분",
-                "센서 fault/stale 또는 보호 정지 후 정상 샘플만으로 다시 기동하지 않습니다. 사용자의 명시적인 ON을 요구합니다.",
+                "센서 오류·데이터 갱신 지연(stale) 등으로 보호 정지한 뒤에는 정상 샘플이 들어와도 자동 재기동하지 않습니다. 정상 샘플과 사용자의 명시적인 ON 명령을 모두 요구합니다.",
             ),
         ],
         problem=[
@@ -69,7 +73,7 @@ PROJECTS = [
                 "AUTO 제어·센서 IPC·종료 경로의 회귀 검증을 수행하고, 결과를 저장소에 정리했습니다.",
             ),
         ],
-        verified="C 테스트 11개, CLI 37개, 정리·DT 제안 6개를 통과했습니다. GCC analyzer와 ASan/UBSan·ThreadSanitizer로 정적 분석·메모리·동시성 검사를 수행했습니다. 모터·엔코더·센서·LCD의 통합 동작과 보호 정지 확인 기록을 함께 정리했습니다.",
+        verified="C 테스트 11개와 CLI 테스트 37개를 통과하고, 자원 정리와 Device Tree 제안을 별도로 검증했습니다. GCC analyzer와 ASan/UBSan·ThreadSanitizer로 정적 분석·메모리·동시성 검사를 수행했습니다. 모터·엔코더·센서·LCD의 통합 동작과 보호 정지 확인 기록을 함께 정리했습니다.",
     ),
     dict(
         slug="smart-recycling",
@@ -143,7 +147,7 @@ PROJECTS = [
         role="STM32 펌웨어, Qt 관제 서버, Android 앱 구현·연동",
         tags=["STM32", "Bare-metal C", "UART / TCP", "Qt", "Kotlin"],
         result="자동 차단·모바일·현장 스위치·Qt 제어 통합 시연 공개",
-        demo="../../assets/monitoring-demo.mp4",
+        demo="../../assets/projects/smart-monitoring/demo.mp4",
         doc="docs/02_protocol_specification.md",
         review="docs/08_setup_and_operation_guide.md",
         flow=[
@@ -183,6 +187,78 @@ PROJECTS = [
         ],
         verified="입력값에 따른 자동 차단과 Android·현장 버튼·Qt GUI의 수동 제어를 연동했습니다. 스마트폰 카메라 영상, 센서 차트, CSV 기록을 하나의 관제 화면에 구성했으며, 전체 시연과 UART/TCP 규약·펌웨어·앱 문서를 공개했습니다.",
     ),
+    dict(
+        slug="fpga-spi-sensor-monitoring",
+        repo="fpga-spi-sensor-monitoring",
+        title="FPGA SPI Sensor Monitoring",
+        label="04 / FPGA COMMUNICATION",
+        kind="팀 · 교육 프로젝트",
+        image="spi-monitoring",
+        image_caption="왼쪽 Master: SPI 수신·표시 / 오른쪽 Slave: 센서 계측 · 클릭하여 확대",
+        alt="SPI로 연결한 두 Basys3와 Master OLED, Slave의 온습도·초음파 센서",
+        message="센서 데이터를 검증하고, 표시와 기록으로 연결",
+        summary="두 Basys3 사이의 SPI 통신으로 센서 데이터를 수집하고, Master FPGA에서 검증·표시한 뒤 Qt 모니터로 추이와 상태를 기록합니다.",
+        role="Master RTL 설계·검증, 보드 간 인터페이스 정의, Qt 모니터 구현",
+        tags=[
+            "Verilog",
+            "SPI / I²C / UART",
+            "FSM",
+            "Qt / C++"
+        ],
+        result="Master 테스트벤치 13개·QtTest 36건 통과, 센서 수신·오류 복구 실물 시연",
+        demo="../../assets/projects/fpga-spi-sensor-monitoring/demo.mp4",
+        doc="docs/interface.md",
+        review="docs/implementation.md",
+        scope="보드 간 SPI 규약을 정의하고 Master FPGA의 통신·프레임 검사·OLED/FND/UART 출력을 설계했습니다. Qt 모니터에서는 비동기 수신, 센서별 추이, 상태 기록과 CSV 저장을 구현했습니다.",
+        team="팀원 담당: DHT11·HC-SR04 센서 Driver와 Slave FPGA 구현.",
+        flow=[
+            [
+                "센서 → Slave",
+                "DHT11 · HC-SR04 → Slave Snapshot"
+            ],
+            [
+                "통신 · 검증 · 표시",
+                "SPI → Master RTL → OLED / FND"
+            ],
+            [
+                "PC 수신 · 기록",
+                "Master UART → Qt → 추이 · CSV"
+            ]
+        ],
+        decisions=[
+            [
+                "센서 미준비와 통신 오류를 구분",
+                "100ms마다 80bit 고정 프레임을 수신하고 길이·Header·XOR·예약 Bit·유효 필드 범위를 검사합니다. 정상 프레임에서 센서값과 유효 상태를 함께 반영하며, 센서가 미준비인 정상 응답과 통신 오류를 구분합니다."
+            ],
+            [
+                "느린 출력과 SPI 수신을 분리",
+                "OLED·UART는 현재 출력용 Snapshot과 최신 대기 상태 한 개를 보관합니다. 출력 중 새 상태가 도착하면 대기 상태를 교체해 SPI 수신 경로가 출력을 기다리지 않도록 구성했습니다."
+            ],
+            [
+                "수신 중단을 표시와 기록에 반영",
+                "Master는 전송 Timeout과 500 ms 동안 정상 프레임이 없는 상태를 감지하고, Qt는 부분 수신·여러 줄 수신을 복원합니다. 오류·재연결 구간의 그래프를 분리하고 CSV는 저장을 누른 시점의 기록 Snapshot으로 내보냅니다."
+            ]
+        ],
+        problem=[
+            [
+                "현상",
+                "OLED 화면이 깨지고 Reset·이전 Bitstream 재적용으로도 정상 표시가 복구되지 않았습니다."
+            ],
+            [
+                "원인 파악",
+                "실물 패널의 128×32 해상도를 기준으로 초기화와 화면 메모리 구성을 대조했습니다."
+            ],
+            [
+                "수정",
+                "128×32 패널에 맞춰 초기화와 4개 Page·네 줄 화면 구성을 수정했습니다."
+            ],
+            [
+                "확인 결과",
+                "수정 후 정상 표시와 Reset 후 복구를 확인했습니다. 패널 규격에 맞춰 표시 경로를 정리한 사례입니다."
+            ]
+        ],
+        verified="공개 검증 기록에서 Master Self-checking Testbench 13개·1,447건, QtTest 36건 PASS를 확인할 수 있습니다. Master 배치배선은 내부 WNS 2.441ns·WHS 0.069ns, DRC 위반 0을 기록했습니다. 실물에서는 센서값의 SPI 수신과 OLED·FND·Qt 표시, Reset 후 복구, USB 수동 재접속과 CSV 기록을 확인했습니다.",
+    ),
 ]
 
 
@@ -192,8 +268,8 @@ def link(url, label, cls="", aria_label=""):
 
 
 def photo(name, alt, prefix="", caption="", eager=False):
-    src = f"{prefix}assets/{name}.webp"
-    width, height = IMAGE_SIZES[name]
+    path, width, height = IMAGES[name]
+    src = f"{prefix}assets/{path}"
     return f'<figure class="detail-photo"><a class="zoom-link" href="{src}" aria-label="이미지 확대: {alt}"><img src="{src}" width="{width}" height="{height}" alt="{alt}" loading="{"eager" if eager else "lazy"}"></a><figcaption>{caption or "프로젝트 저장소의 실제 사진 · 클릭하여 확대"}</figcaption></figure>'
 
 
@@ -205,7 +281,7 @@ def shell(
     canonical="",
 ):
     return f'''<!doctype html>
-<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title} · 김호철</title><meta name="description" content="{description}"><meta name="theme-color" content="#f6f8fb"><meta property="og:title" content="{title} · 김호철"><meta property="og:description" content="{description}"><meta property="og:type" content="website"><link rel="canonical" href="https://hckim-dev.github.io/{canonical}"><link rel="stylesheet" href="{prefix}assets/site.css"><script src="{prefix}assets/site.js" defer></script><link rel="icon" href="{prefix}assets/favicon.svg" type="image/svg+xml"></head>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>{title} · 김호철</title><meta name="description" content="{description}"><meta name="theme-color" content="#f6f8fb"><meta property="og:title" content="{title} · 김호철"><meta property="og:description" content="{description}"><meta property="og:type" content="website"><link rel="canonical" href="https://hckim-dev.github.io/{canonical}"><link rel="stylesheet" href="{prefix}assets/css/site.css"><script src="{prefix}assets/js/site.js" defer></script><link rel="icon" href="{prefix}assets/icons/favicon.svg" type="image/svg+xml"></head>
 <body><a class="skip" href="#main">본문으로 건너뛰기</a><header class="header"><nav class="nav wrap" aria-label="주 메뉴"><a class="brand" href="{prefix}index.html"><span>HC.</span>김호철</a><button class="mobile-menu" aria-expanded="false" aria-controls="nav-links">메뉴</button><div class="nav-links" id="nav-links"><a href="{prefix}index.html#experience">실무 경험</a><a href="{prefix}index.html#projects">프로젝트</a><a href="{prefix}index.html#contact">연락처</a><a class="resume" href="{prefix}assets/resume.pdf">이력서 PDF ↗</a></div></nav></header>
 {content}
 <footer class="footer"><div class="wrap"><span>김호철 · Embedded &amp; Systems Software</span><span>{link(GH + "hckim-dev.github.io/blob/master/docs/SOURCES.md", "콘텐츠 근거 ↗")} · {link(GH.rstrip("/"), "GitHub ↗")}</span></div></footer>
@@ -217,7 +293,7 @@ def heading(number, en, title, text=""):
 
 
 def home():
-    content = """<main id="main" class="wrap"><section class="hero" aria-labelledby="hero-title"><div><div class="eyebrow">Embedded &amp; Systems Software</div><h1 id="hero-title">장치와 소프트웨어,<br><span>그 사이를 연결합니다.</span></h1><p class="lead">차량 진단과 센서 데이터 통신을 다룬 약 3년의 실무 경험.<br>MCU·Linux 제어 프로젝트로 장치에 대한 이해를 넓히고 있습니다.</p><p class="identity">김호철 <span>임베디드 · 시스템 SW 개발자</span></p><div class="actions"><a class="button" href="#projects">대표 프로젝트 보기 ↓</a><a class="button secondary" href="assets/resume.pdf">이력서 PDF ↗</a></div></div><figure class="hero-photo"><a class="zoom-link" href="assets/fan.webp" aria-label="스마트 선풍기 실물 이미지 확대"><img src="assets/fan.webp" width="825" height="1100" alt="Jetson과 모터·LCD·센서를 연결한 개인 스마트 선풍기 프로젝트 실물" fetchpriority="high"></a><figcaption><strong>직접 연결하고, 동작을 확인한 시스템</strong><span>Jetson Smart Fan</span></figcaption></figure></section>
+    content = f"""<main id="main" class="wrap"><section class="hero" aria-labelledby="hero-title"><div><div class="eyebrow">Embedded &amp; Systems Software</div><h1 id="hero-title">장치와 소프트웨어,<br><span>그 사이를 연결합니다.</span></h1><p class="lead">차량 진단과 센서 데이터 통신을 다룬 약 3년의 실무 경험.<br>MCU·Linux 제어 프로젝트로 장치에 대한 이해를 넓히고 있습니다.</p><p class="identity">김호철 <span>임베디드 · 시스템 SW 개발자</span></p><div class="actions"><a class="button" href="#projects">대표 프로젝트 보기 ↓</a><a class="button secondary" href="assets/resume.pdf">이력서 PDF ↗</a></div></div><figure class="hero-photo"><a class="zoom-link" href="assets/{IMAGES["fan"][0]}" aria-label="스마트 선풍기 실물 이미지 확대"><img src="assets/{IMAGES["fan"][0]}" width="{IMAGES["fan"][1]}" height="{IMAGES["fan"][2]}" alt="Jetson과 모터·LCD·센서를 연결한 개인 스마트 선풍기 프로젝트 실물" fetchpriority="high"></a><figcaption><strong>직접 연결하고, 동작을 확인한 시스템</strong><span>Jetson Smart Fan</span></figcaption></figure></section>
 <div class="summary-strip"><div><span>PROFESSIONAL EXPERIENCE</span><strong>3년 3개월 · 장치 연동 SW</strong></div><div><span>FROM DEVICE TO SERVICE</span><strong>통신 · 데이터 처리 · 제어</strong></div><div><span>ENGINEERING APPROACH</span><strong>문제 분석과 구현</strong></div></div>
 <section id="experience" class="section">"""
     content += heading(
@@ -236,7 +312,7 @@ def home():
     for p in PROJECTS:
         card_image = p.get("card_image", p["image"])
         card_alt = p.get("card_alt", p["alt"])
-        content += f'''<article class="project"><div class="project-media"><img src="assets/{card_image}.webp" width="{IMAGE_SIZES[card_image][0]}" height="{IMAGE_SIZES[card_image][1]}" alt="{card_alt}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
+        content += f'''<article class="project"><div class="project-media"><img src="assets/{IMAGES[card_image][0]}" width="{IMAGES[card_image][1]}" height="{IMAGES[card_image][2]}" alt="{card_alt}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
     content += (
         '</section><section class="section" id="more-projects">'
         + heading("03", "More projects", "장치 제어에서 추론·앱까지", "FPGA 제어 논리, AVR 장치 제어, Jetson 영상 추론과 Android 앱으로 구현 경험을 확장했습니다.")
@@ -244,7 +320,7 @@ def home():
     )
     extras = [
         (
-            "fpga.webp",
+            "fpga",
             "FPGA 기반 전자레인지 제어 모형",
             "fpga-microwave-oven",
             "Verilog · FSM · PWM · 테스트벤치",
@@ -252,7 +328,7 @@ def home():
             "Basys3에 버튼·로터리 인코더·서보·DC 모터를 연결한 전자레인지 제어 모형",
         ),
         (
-            "avr.webp",
+            "avr",
             "AVR 기반 RTC·계산기",
             "avr-rtc-calculator",
             "C · I²C · 오실로스코프",
@@ -260,7 +336,7 @@ def home():
             "I2C START와 장치 주소를 분석한 실제 오실로스코프 계측",
         ),
         (
-            "avr-car.webp",
+            "avr-car",
             "AVR 기반 장애물 회피 주행차",
             "avr-autonomous-car",
             "C · 초음파 · Interrupt · PWM · Bluetooth",
@@ -268,7 +344,7 @@ def home():
             "전방과 좌우에 초음파 센서 3개를 장착한 AVR 장애물 회피 주행차 실물",
         ),
         (
-            "tensorrps.webp",
+            "tensorrps",
             "Jetson 기반 가위바위보",
             "jetson-orin-yolo11-rps",
             "Python · TensorRT · CUDA · OpenCV",
@@ -276,7 +352,7 @@ def home():
             "TensorRPS 시연 영상의 손 제스처 탐지 박스와 카운트다운·점수 화면",
         ),
         (
-            "pokedex.webp",
+            "pokedex",
             "PokeDex",
             "PokeDex",
             "Kotlin · MVI · Room",
@@ -285,12 +361,12 @@ def home():
         ),
     ]
     for im, title, repo, tech, body, alt in extras:
-        width, height = IMAGE_SIZES[Path(im).stem]
-        content += f'<article class="small-card"><a class="zoom-link" href="assets/{im}" aria-label="{title} 이미지 확대"><img src="assets/{im}" width="{width}" height="{height}" alt="{alt}" loading="lazy"></a><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link", title + " 저장소 · 설계와 검증 ↗")}</article>'
+        image_path, width, height = IMAGES[im]
+        content += f'<article class="small-card"><a class="zoom-link" href="assets/{image_path}" aria-label="{title} 이미지 확대"><img src="assets/{image_path}" width="{width}" height="{height}" alt="{alt}" loading="lazy"></a><div class="project-kicker">개인 · 학습 프로젝트</div><h3>{title}</h3><p><strong>{tech}</strong></p><p>{body}</p>{link(GH + repo, "저장소 · 설계와 검증 ↗", "text-link", title + " 저장소 · 설계와 검증 ↗")}</article>'
     content += (
         '</div></section><section class="section" id="skills">'
         + heading("04", "Skills & Learning", "경험에 연결된 기술")
-        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / AVR RTC·계산기·주행차</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / 가위바위보 / PokeDex</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · FSM · 테스트벤치 · Vivado<br>FPGA 기반 전자레인지 제어 모형</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
+        + """<div class="skills"><div><div class="skill-row"><strong>장치 통신 · 데이터 처리</strong><p>Java · Kotlin · Linux · CAN · Ethernet · Bluetooth<br>지아이티 차량 진단 / 브이유텍 센서·중계기 실무</p></div><div class="skill-row"><strong>MCU · Linux 제어</strong><p>C · C++ · STM32 · AVR · ioctl · IPC<br>스마트 선풍기 / 모니터링 / AVR RTC·계산기·주행차</p></div><div class="skill-row"><strong>시스템 통합 · 사용자 화면</strong><p>Qt · Python · TensorRT · FastAPI · Android<br>재활용 키오스크 / 모니터링 / 가위바위보 / PokeDex</p></div><div class="skill-row"><strong>디지털 논리 · 검증</strong><p>Verilog · SPI · I²C · UART · 테스트벤치 · Vivado<br>FPGA SPI 센서 모니터링 / 전자레인지 제어 모형</p></div></div><div class="education"><div class="eyebrow">Education · Qualifications</div><h3>AI 시스템반도체 SW 개발자 과정 2기</h3><p>대한상공회의소 서울인력개발원<br>2026.05.27 — 2026.12.16 · 교육 중</p><p>MCU·통신, Linux 시스템·드라이버, Qt, Edge AI, FPGA·Verilog 실습</p><hr><p><strong>장안대학교 인터넷정보통신과 · 3년제</strong><br>2015.03 — 2021.02 · 졸업<br>학점 3.95 / 4.5</p><p><strong>자격 · 어학</strong><br>정보처리산업기사 · 네트워크관리사 2급 · JLPT N1</p></div></div></section><section class="contact" id="contact"><div class="eyebrow">05 / Contact</div><h2>함께 연결할 다음 시스템을 기다립니다.</h2><a class="email" href="mailto:yp0504@naver.com">yp0504@naver.com ↗</a><div class="actions"><a class="button" href="assets/resume.pdf">이력서 PDF 열기 ↗</a><a class="button secondary" href="https://github.com/hckim-dev?tab=repositories">GitHub 전체 저장소 ↗</a></div></section></main>"""
     )
     return shell("임베디드 · 시스템 SW 포트폴리오", content)
 
@@ -302,7 +378,7 @@ def detail(p):
         content += f'<div class="note">{p["team"]}</div>'
     content += (
         '<div style="margin-top:24px">'
-        + photo(p["image"], p["alt"], prefix, eager=True)
+        + photo(p["image"], p["alt"], prefix, caption=p.get("image_caption", ""), eager=True)
         + "</div></section>"
     )
     if p["slug"] in ["smart-recycling", "smart-monitoring"]:
@@ -315,6 +391,8 @@ def detail(p):
             prefix,
             "프로젝트 저장소의 실제 UI 화면 · 클릭하여 확대",
         )
+    if p["slug"] == "fpga-spi-sensor-monitoring":
+        content += photo("spi-monitoring-ui", "Qt Sensor Desk의 센서값·추이·상태 기록·CSV 저장 화면", prefix, "프로젝트 저장소의 실제 Qt 화면과 기능 설명 · 클릭하여 확대")
     content += (
         '<section id="architecture" class="detail-section"><h2>02. 시스템 구조</h2><div class="flow">'
         + "".join(f"<div><b>{a}</b><span>{b}</span></div>" for a, b in p["flow"])
@@ -357,4 +435,4 @@ if __name__ == "__main__":
         folder = ROOT / "projects" / p["slug"]
         folder.mkdir(parents=True, exist_ok=True)
         (folder / "index.html").write_text(detail(p), encoding="utf-8")
-    print("Generated 4 static HTML pages.")
+    print(f"Generated {len(PROJECTS) + 1} static HTML pages.")
