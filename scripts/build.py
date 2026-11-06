@@ -199,12 +199,7 @@ PROJECTS = [
         message="센서 데이터를 검증하고, 표시와 기록으로 연결",
         summary="두 Basys3 사이의 SPI 통신으로 센서 데이터를 수집하고, Master FPGA에서 검증·표시한 뒤 Qt 모니터로 추이와 상태를 기록합니다.",
         role="Master RTL 설계·검증, 보드 간 인터페이스 정의, Qt 모니터 구현",
-        tags=[
-            "Verilog",
-            "SPI / I²C / UART",
-            "FSM",
-            "Qt / C++"
-        ],
+        tags=["Verilog", "SPI / I²C / UART", "FSM", "Qt / C++"],
         result="Master 테스트벤치 13개·QtTest 36건 통과, 센서 수신·오류 복구 실물 시연",
         demo="../../assets/projects/fpga-spi-sensor-monitoring/demo.mp4",
         doc="docs/interface.md",
@@ -212,50 +207,41 @@ PROJECTS = [
         scope="보드 간 SPI 규약을 정의하고 Master FPGA의 통신·프레임 검사·OLED/FND/UART 출력을 설계했습니다. Qt 모니터에서는 비동기 수신, 센서별 추이, 상태 기록과 CSV 저장을 구현했습니다.",
         team="팀원 담당: DHT11·HC-SR04 센서 Driver와 Slave FPGA 구현.",
         flow=[
-            [
-                "센서 → Slave",
-                "DHT11 · HC-SR04 → Slave Snapshot"
-            ],
-            [
-                "통신 · 검증 · 표시",
-                "SPI → Master RTL → OLED / FND"
-            ],
-            [
-                "PC 수신 · 기록",
-                "Master UART → Qt → 추이 · CSV"
-            ]
+            ["센서 → Slave", "DHT11 · HC-SR04 → Slave Snapshot"],
+            ["통신 · 검증 · 표시", "SPI → Master RTL → OLED / FND"],
+            ["PC 수신 · 기록", "Master UART → Qt → 추이 · CSV"],
         ],
         decisions=[
             [
                 "센서 미준비와 통신 오류를 구분",
-                "100ms마다 80bit 고정 프레임을 수신하고 길이·Header·XOR·예약 Bit·유효 필드 범위를 검사합니다. 정상 프레임에서 센서값과 유효 상태를 함께 반영하며, 센서가 미준비인 정상 응답과 통신 오류를 구분합니다."
+                "100ms마다 80bit 고정 프레임을 수신하고 길이·Header·XOR·예약 Bit·유효 필드 범위를 검사합니다. 정상 프레임에서 센서값과 유효 상태를 함께 반영하며, 센서가 미준비인 정상 응답과 통신 오류를 구분합니다.",
             ],
             [
                 "느린 출력과 SPI 수신을 분리",
-                "OLED·UART는 현재 출력용 Snapshot과 최신 대기 상태 한 개를 보관합니다. 출력 중 새 상태가 도착하면 대기 상태를 교체해 SPI 수신 경로가 출력을 기다리지 않도록 구성했습니다."
+                "OLED·UART는 현재 출력용 Snapshot과 최신 대기 상태 한 개를 보관합니다. 출력 중 새 상태가 도착하면 대기 상태를 교체해 SPI 수신 경로가 출력을 기다리지 않도록 구성했습니다.",
             ],
             [
                 "수신 중단을 표시와 기록에 반영",
-                "Master는 전송 Timeout과 500 ms 동안 정상 프레임이 없는 상태를 감지하고, Qt는 부분 수신·여러 줄 수신을 복원합니다. 오류·재연결 구간의 그래프를 분리하고 CSV는 저장을 누른 시점의 기록 Snapshot으로 내보냅니다."
-            ]
+                "Master는 전송 Timeout과 500 ms 동안 정상 프레임이 없는 상태를 감지하고, Qt는 부분 수신·여러 줄 수신을 복원합니다. 오류·재연결 구간의 그래프를 분리하고 CSV는 저장을 누른 시점의 기록 Snapshot으로 내보냅니다.",
+            ],
         ],
         problem=[
             [
                 "현상",
-                "OLED 화면이 깨지고 Reset·이전 Bitstream 재적용으로도 정상 표시가 복구되지 않았습니다."
+                "OLED 화면이 깨지고 Reset·이전 Bitstream 재적용으로도 정상 표시가 복구되지 않았습니다.",
             ],
             [
                 "원인 파악",
-                "실물 패널의 128×32 해상도를 기준으로 초기화와 화면 메모리 구성을 대조했습니다."
+                "실물 패널의 128×32 해상도를 기준으로 초기화와 화면 메모리 구성을 대조했습니다.",
             ],
             [
                 "수정",
-                "128×32 패널에 맞춰 초기화와 4개 Page·네 줄 화면 구성을 수정했습니다."
+                "128×32 패널에 맞춰 초기화와 4개 Page·네 줄 화면 구성을 수정했습니다.",
             ],
             [
                 "확인 결과",
-                "수정 후 정상 표시와 Reset 후 복구를 확인했습니다. 패널 규격에 맞춰 표시 경로를 정리한 사례입니다."
-            ]
+                "수정 후 정상 표시와 Reset 후 복구를 확인했습니다. 패널 규격에 맞춰 표시 경로를 정리한 사례입니다.",
+            ],
         ],
         verified="공개 검증 기록에서 Master Self-checking Testbench 13개·1,447건, QtTest 36건 PASS를 확인할 수 있습니다. Master 배치배선은 내부 WNS 2.441ns·WHS 0.069ns, DRC 위반 0을 기록했습니다. 실물에서는 센서값의 SPI 수신과 OLED·FND·Qt 표시, Reset 후 복구, USB 수동 재접속과 CSV 기록을 확인했습니다.",
     ),
@@ -293,7 +279,7 @@ def heading(number, en, title, text=""):
 
 
 def home():
-    content = f"""<main id="main" class="wrap"><section class="hero" aria-labelledby="hero-title"><div><div class="eyebrow">Embedded &amp; Systems Software</div><h1 id="hero-title">장치와 소프트웨어,<br><span>그 사이를 연결합니다.</span></h1><p class="lead">차량 진단과 센서 데이터 통신을 다룬 약 3년의 실무 경험.<br>MCU·Linux 제어 프로젝트로 장치에 대한 이해를 넓히고 있습니다.</p><p class="identity">김호철 <span>임베디드 · 시스템 SW 개발자</span></p><div class="actions"><a class="button" href="#projects">대표 프로젝트 보기 ↓</a><a class="button secondary" href="assets/resume.pdf">이력서 PDF ↗</a></div></div><figure class="hero-photo"><a class="zoom-link" href="assets/{IMAGES["fan"][0]}" aria-label="스마트 선풍기 실물 이미지 확대"><img src="assets/{IMAGES["fan"][0]}" width="{IMAGES["fan"][1]}" height="{IMAGES["fan"][2]}" alt="Jetson과 모터·LCD·센서를 연결한 개인 스마트 선풍기 프로젝트 실물" fetchpriority="high"></a><figcaption><strong>직접 연결하고, 동작을 확인한 시스템</strong><span>Jetson Smart Fan</span></figcaption></figure></section>
+    content = """<main id="main" class="wrap"><section class="hero" aria-labelledby="hero-title"><div class="hero-content"><div class="eyebrow">Embedded &amp; Systems Software</div><h1 id="hero-title">장치와 소프트웨어,<br><span>그 사이를 연결합니다.</span></h1><p class="lead">차량 진단과 센서 데이터 통신을 다룬 <span class="career-duration">3년 3개월</span>의 실무 경험.<br>MCU·Linux·FPGA 제어 프로젝트로 장치에 대한 이해를 넓히고 있습니다.</p><p class="identity">김호철 <span>임베디드 · 시스템 SW 개발자</span></p><div class="actions"><a class="button" href="#projects">대표 프로젝트 보기 ↓</a><a class="button secondary" href="assets/resume.pdf">이력서 PDF ↗</a></div></div></section>
 <div class="summary-strip"><div><span>PROFESSIONAL EXPERIENCE</span><strong>3년 3개월 · 장치 연동 SW</strong></div><div><span>FROM DEVICE TO SERVICE</span><strong>통신 · 데이터 처리 · 제어</strong></div><div><span>ENGINEERING APPROACH</span><strong>문제 분석과 구현</strong></div></div>
 <section id="experience" class="section">"""
     content += heading(
@@ -315,7 +301,12 @@ def home():
         content += f'''<article class="project"><div class="project-media"><img src="assets/{IMAGES[card_image][0]}" width="{IMAGES[card_image][1]}" height="{IMAGES[card_image][2]}" alt="{card_alt}" loading="lazy"></div><div class="project-body"><div class="project-kicker">{p["label"]} · {p["kind"]}</div><h3>{p["message"]}</h3><p>{p["title"]}</p><p class="role-line"><strong>본인 역할</strong> · {p["role"]}</p><div class="tags">{"".join(f"<span>{t}</span>" for t in p["tags"])}</div><p>{p["result"]}</p><a class="text-link" href="projects/{p["slug"]}/">{p["title"]} 상세 보기 →</a></div></article>'''
     content += (
         '</section><section class="section" id="more-projects">'
-        + heading("03", "More projects", "장치 제어에서 추론·앱까지", "FPGA 제어 논리, AVR 장치 제어, Jetson 영상 추론과 Android 앱으로 구현 경험을 확장했습니다.")
+        + heading(
+            "03",
+            "More projects",
+            "장치 제어에서 추론·앱까지",
+            "FPGA 제어 논리, AVR 장치 제어, Jetson 영상 추론과 Android 앱으로 구현 경험을 확장했습니다.",
+        )
         + '<div class="cards">'
     )
     extras = [
@@ -378,7 +369,9 @@ def detail(p):
         content += f'<div class="note">{p["team"]}</div>'
     content += (
         '<div style="margin-top:24px">'
-        + photo(p["image"], p["alt"], prefix, caption=p.get("image_caption", ""), eager=True)
+        + photo(
+            p["image"], p["alt"], prefix, caption=p.get("image_caption", ""), eager=True
+        )
         + "</div></section>"
     )
     if p["slug"] in ["smart-recycling", "smart-monitoring"]:
@@ -392,7 +385,12 @@ def detail(p):
             "프로젝트 저장소의 실제 UI 화면 · 클릭하여 확대",
         )
     if p["slug"] == "fpga-spi-sensor-monitoring":
-        content += photo("spi-monitoring-ui", "Qt Sensor Desk의 센서값·추이·상태 기록·CSV 저장 화면", prefix, "프로젝트 저장소의 실제 Qt 화면과 기능 설명 · 클릭하여 확대")
+        content += photo(
+            "spi-monitoring-ui",
+            "Qt Sensor Desk의 센서값·추이·상태 기록·CSV 저장 화면",
+            prefix,
+            "프로젝트 저장소의 실제 Qt 화면과 기능 설명 · 클릭하여 확대",
+        )
     content += (
         '<section id="architecture" class="detail-section"><h2>02. 시스템 구조</h2><div class="flow">'
         + "".join(f"<div><b>{a}</b><span>{b}</span></div>" for a, b in p["flow"])

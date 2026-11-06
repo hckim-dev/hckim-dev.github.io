@@ -22,10 +22,17 @@ def main():
     projects = site["PROJECTS"]
     routes = ["", *(f"projects/{p['slug']}/" for p in projects)]
     expected = {"index.html": site["home"]()}
-    expected.update({f"projects/{p['slug']}/index.html": site["detail"](p) for p in projects})
+    expected.update(
+        {f"projects/{p['slug']}/index.html": site["detail"](p) for p in projects}
+    )
     for path, content in expected.items():
-        if not (ROOT / path).is_file() or (ROOT / path).read_text(encoding="utf-8") != content:
-            raise SystemExit(f"Generated HTML is out of date: {path}. Run python scripts/build.py first.")
+        if (
+            not (ROOT / path).is_file()
+            or (ROOT / path).read_text(encoding="utf-8") != content
+        ):
+            raise SystemExit(
+                f"Generated HTML is out of date: {path}. Run python scripts/build.py first."
+            )
     results = []
     errors = []
     external = set()
@@ -75,7 +82,9 @@ def main():
                         ), ("anchor missing", url)
                 if width in [1440, 390]:
                     slug = route.strip("/").replace("/", "-") or "home"
-                    page.screenshot(path=str(OUT / f"{slug}-{width}.png"), full_page=True)
+                    page.screenshot(
+                        path=str(OUT / f"{slug}-{width}.png"), full_page=True
+                    )
                 for zoom in page.locator(".zoom-link").all():
                     zoom.click()
                     assert page.locator("dialog").is_visible()
@@ -84,7 +93,9 @@ def main():
                     )
                     bounds = page.locator("dialog").bounding_box()
                     page.mouse.click(bounds["x"] + 2, bounds["y"] + 2)
-                    assert page.locator("dialog").is_visible(), "dialog padding must not close it"
+                    assert page.locator("dialog").is_visible(), (
+                        "dialog padding must not close it"
+                    )
                     picture = page.locator("dialog img")
                     picture.evaluate("(img)=>img.decode()")
                     original_width = picture.bounding_box()["width"]
@@ -104,7 +115,9 @@ def main():
                     assert menu.get_attribute("aria-expanded") == "true"
                     page.locator(".nav-links a").first.click()
                     assert menu.get_attribute("aria-expanded") == "false"
-                results.append({"route": route or "/", "width": width, "status": "pass"})
+                results.append(
+                    {"route": route or "/", "width": width, "status": "pass"}
+                )
             page.close()
         page = browser.new_page()
         for project in projects:
@@ -128,9 +141,14 @@ def main():
                     }""",
                     project["demo"],
                 )
-                page.wait_for_function('document.querySelector("video").currentTime > 0.2')
+                page.wait_for_function(
+                    'document.querySelector("video").currentTime > 0.2'
+                )
         pdf = page.request.get(BASE + "assets/resume.pdf")
-        assert pdf.status == 200 and pdf.body() == (ROOT / "assets/resume.pdf").read_bytes()
+        assert (
+            pdf.status == 200
+            and pdf.body() == (ROOT / "assets/resume.pdf").read_bytes()
+        )
         for route in routes:
             nojs = browser.new_page(
                 java_script_enabled=False, viewport={"width": 390, "height": 844}

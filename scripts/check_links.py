@@ -28,19 +28,28 @@ def main():
     try:
         report = json.loads(report_path.read_text(encoding="utf-8"))
         urls = report["external_links"]
-        if not isinstance(urls, list) or not urls or not all(
-            isinstance(url, str) and url.startswith(("https://", "http://")) for url in urls
+        if (
+            not isinstance(urls, list)
+            or not urls
+            or not all(
+                isinstance(url, str) and url.startswith(("https://", "http://"))
+                for url in urls
+            )
         ):
             raise ValueError("external_links must be a nonempty HTTP URL list")
     except (OSError, ValueError, KeyError, TypeError) as error:
-        raise SystemExit(f"Run python scripts/verify.py successfully first: {error}") from error
+        raise SystemExit(
+            f"Run python scripts/verify.py successfully first: {error}"
+        ) from error
     with concurrent.futures.ThreadPoolExecutor(max_workers=6) as executor:
         results = list(executor.map(check, urls))
     (OUT / "link-results.json").write_text(
         json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     failed = [r for r in results if r.get("status") != 200]
-    print(f"{len(results) - len(failed)}/{len(results)} external links return HTTP 200.")
+    print(
+        f"{len(results) - len(failed)}/{len(results)} external links return HTTP 200."
+    )
     if failed:
         print(json.dumps(failed, ensure_ascii=False))
         raise SystemExit(1)
