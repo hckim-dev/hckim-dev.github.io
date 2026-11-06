@@ -1,2 +1,7 @@
-_handoff/
+# Local source material and QA output
+/_handoff/
+
+# Python verification environment and bytecode
+/.venv/
 __pycache__/
+*.py[cod]
